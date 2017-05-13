@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>ToDoList</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/bootstrap-theme.css">
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/timer.js"></script>
+
+</head>
+
+<body onload="odliczanie();">
+
+    <div class="container-fluid">
+        <div class="row col-xs-12 col-md-offset-7">
+            <h1 style="text-align: center">To Do List</h1>
+              <div style="text-align:center;" id="zegar">12:00:00</div>
+            <script src="js/timer.js"></script>
+            <input type="text" id="name" class="form-control" placeholder="Wpisz zadanie">
+            <button id="send" type="button" class="btn btn-default"><span>Dodaj</span></button>
+            <label id="errorName" style=" display: none " class="label label-danger">Brak zadania</label>
+            <table id="people" class="table table-striped">
+
+                <thead>
+                    <tr>
+                        <th>Zadanie</th>
+                        <th></th>
+                        <th>Wykonano</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+
+</body>
+<script src="js/jquery-3.2.0.js"></script>
+<script src="js/bootstrap.js"></script>
+
+<script>
+    var notes = [];
+    var noteId = 0;
+
+    function findNote(id) {
+        for (var i = 0; i < notes.length; i++) {
+            if (notes[i].id == id) {
+                return notes[i];
+            }
+        }
+    }
+
+    function del(button) { // odbieram przycisk w funkcji
+        var id = $(button).attr('data-id');
+        button.closest('tr').remove();
+
+        var note = findNote(id);
+        var noteIndex = notes.indexOf(note);
+        notes.splice(noteIndex, 1);
+
+        // za pomocą button szukam najbliższego elementu TR i go usuwam funkcją remove()
+    }
+
+    function move(element) {
+        var $element = $(element);
+
+        var id = $element.attr('data-id');
+        $('#name').val(findNote(id).value);
+
+    }
+
+
+    $('#send').click(function() {
+
+        var name = $('#name').val(); // pobiera tylko wartość inputa (val)
+
+
+        if (name == '') {
+
+            $('#errorName').show();
+
+            return;
+
+        } else $('#errorName').hide();
+
+
+        noteId++;
+        var note = {
+            value: name,
+            id: noteId,
+            date: new Date()
+        };
+
+        notes.push(note);
+
+        var buttonDelete = "<button onclick=' del(this) ' class='btn btn-danger' data-id='" + noteId + "'>x</button>"; // del(this) - przekazuje przycisk do funkcji
+
+
+
+        var html = " <tr> <td><a href=\"#1\" onclick='move(this)' data-id='" + noteId + "'>" + name.slice(0, 10) + "</a></td><td>" + buttonDelete + "</td> </tr> ";
+
+        // powyższa linijka kodu skleja stringi i zmienne w 1 ciąg za pomoca operatorów plus
+
+        $('#people > tbody').append(html); // prepend - wstawia do elementu HTML na początek tabeli, append na koniec
+
+
+
+        $('#name').val('');
+    });
+</script>
+
+</html>
